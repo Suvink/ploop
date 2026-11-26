@@ -81,6 +81,10 @@ assets/           Fonts, images, airline logos and bundled reference data
 
 Both are bundled into the app (Settings → About) so they're readable offline.
 
+## Website
+
+A one-page site with the privacy policy and terms lives in `docs/`, ready for GitHub Pages (Settings → Pages → Deploy from a branch → `main` / `/docs`). After editing `docs/privacy-policy.md` or `docs/terms.md`, run `npm run site` to regenerate `privacy.html` and `terms.html`.
+
 ## License
 
 Ploop is licensed under the [Apache License 2.0](LICENSE). See [NOTICE](NOTICE) for third-party data and fonts, which keep their own licences.

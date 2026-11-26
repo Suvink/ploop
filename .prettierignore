@@ -4,3 +4,5 @@ assets/data
 src/db/migrations
 scripts/.cache
 coverage
+docs/privacy.html
+docs/terms.html

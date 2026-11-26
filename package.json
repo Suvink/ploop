@@ -76,7 +76,8 @@
     "data:airlines": "tsx scripts/build-airlines.ts",
     "data:atlas": "tsx scripts/copy-world-atlas.ts",
     "format": "prettier --write .",
-    "data:logos": "tsx scripts/build-airline-logos.ts"
+    "data:logos": "tsx scripts/build-airline-logos.ts",
+    "site": "tsx scripts/build-site.ts"
   },
   "private": true,
   "jest": {
