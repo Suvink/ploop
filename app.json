@@ -9,10 +9,10 @@
     "backgroundColor": "#13162B",
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.ploop.app"
+      "bundleIdentifier": "com.suvink.ploop"
     },
     "android": {
-      "package": "com.ploop.app",
+      "package": "com.suvink.ploop",
       "adaptiveIcon": {
         "backgroundColor": "#14183A",
         "foregroundImage": "./assets/images/adaptive-foreground.png",
@@ -78,6 +78,17 @@
       "expo-sharing",
       "./plugins/withNoInternetInRelease"
     ],
-    "description": "Every flight as a little story. An offline flight log and passport for Android."
+    "description": "Every flight as a little story. An offline flight log and passport for Android.",
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "c30838bc-7eb4-4270-bf67-e730b39fc342"
+      }
+    },
+    "owner": "suvink"
   }
 }

@@ -89,6 +89,7 @@ function AppStack({ onReady }: { onReady: () => void }) {
         <Stack.Screen name="flight/[id]" options={{ title: '' }} />
         <Stack.Screen name="story/[template]" options={{ title: 'Story' }} />
         <Stack.Screen name="settings" options={{ title: 'Settings' }} />
+        <Stack.Screen name="legal/[doc]" options={{ title: '' }} />
       </Stack>
     </>
   );

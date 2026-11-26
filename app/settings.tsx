@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { router } from 'expo-router';
 import { Pressable, StyleSheet, Switch, TextInput, View } from 'react-native';
 import { DateTime } from 'luxon';
 import { useSettings } from '@/hooks/useSettings';
@@ -240,6 +241,17 @@ export default function SettingsScreen() {
           zones from geo-tz. Fonts: Plus Jakarta Sans, Inter and Fredoka, under the SIL Open Font
           License 1.1. Icons: Feather (MIT).
         </Body>
+        <View style={{ marginTop: space.lg }}>
+          <Divider />
+          <Row
+            label="Privacy Policy"
+            onPress={() => router.push({ pathname: '/legal/[doc]', params: { doc: 'privacy' } })}
+          />
+          <Row
+            label="Terms and Conditions"
+            onPress={() => router.push({ pathname: '/legal/[doc]', params: { doc: 'terms' } })}
+          />
+        </View>
       </Section>
 
       <AirportPicker

@@ -74,6 +74,13 @@ assets/           Fonts, images, airline logos and bundled reference data
 - **Icons:** Feather (MIT)
 - **Airline logos:** trademarks of their respective airlines, used only to identify them
 
+## Privacy and terms
+
+- [Privacy Policy](docs/privacy-policy.md)
+- [Terms and Conditions](docs/terms.md)
+
+Both are bundled into the app (Settings → About) so they're readable offline.
+
 ## License
 
 Ploop is licensed under the [Apache License 2.0](LICENSE). See [NOTICE](NOTICE) for third-party data and fonts, which keep their own licences.
