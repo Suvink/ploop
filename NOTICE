@@ -1,0 +1,12 @@
+Ploop
+Copyright 2026 Suvin Kodituwakku
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+It bundles third-party data and fonts under their own licences:
+- Airport data: OurAirports (public domain)
+- Airline data: OpenFlights (Open Database License)
+- Map outlines: Natural Earth via world-atlas (public domain)
+- Fonts: Plus Jakarta Sans, Inter and Fredoka (SIL Open Font License 1.1, see assets/fonts/)
+- Icons: Feather (MIT)
+- Airline logos are trademarks of their respective airlines and are not covered by this licence.

@@ -1,0 +1,83 @@
+{
+  "expo": {
+    "name": "Ploop",
+    "slug": "ploop",
+    "scheme": "ploop",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "userInterfaceStyle": "automatic",
+    "backgroundColor": "#13162B",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.ploop.app"
+    },
+    "android": {
+      "package": "com.ploop.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#14183A",
+        "foregroundImage": "./assets/images/adaptive-foreground.png",
+        "monochromeImage": "./assets/images/adaptive-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.READ_MEDIA_VIDEO",
+        "android.permission.READ_MEDIA_AUDIO",
+        "android.permission.ACCESS_MEDIA_LOCATION"
+      ]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-sqlite",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash.png",
+          "imageWidth": 200,
+          "backgroundColor": "#14183A"
+        }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/PlusJakartaSans-SemiBold.ttf",
+            "./assets/fonts/PlusJakartaSans-Bold.ttf",
+            "./assets/fonts/Inter-Regular.ttf",
+            "./assets/fonts/Inter-Medium.ttf",
+            "./assets/fonts/Inter-SemiBold.ttf",
+            "./assets/fonts/Fredoka-SemiBold.ttf"
+          ]
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Ploop uses the camera to scan the barcode on your boarding pass. Nothing leaves your phone.",
+          "recordAudioAndroid": false,
+          "barcodeScannerEnabled": true
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Ploop reads a boarding pass screenshot you choose to find its barcode.",
+          "cameraPermission": "Ploop uses the camera to scan the barcode on your boarding pass. Nothing leaves your phone.",
+          "microphonePermission": false
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Ploop saves story images to your photos.",
+          "savePhotosPermission": "Ploop saves story images to your photos.",
+          "granularPermissions": ["photo"]
+        }
+      ],
+      "@react-native-community/datetimepicker",
+      "expo-sharing",
+      "./plugins/withNoInternetInRelease"
+    ],
+    "description": "Every flight as a little story. An offline flight log and passport for Android."
+  }
+}

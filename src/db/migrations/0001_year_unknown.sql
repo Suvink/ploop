@@ -1,0 +1,1 @@
+ALTER TABLE `flights` ADD `year_unknown` integer DEFAULT false NOT NULL;

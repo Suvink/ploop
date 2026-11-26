@@ -1,0 +1,6 @@
+android
+ios
+assets/data
+src/db/migrations
+scripts/.cache
+coverage

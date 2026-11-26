@@ -1,0 +1,105 @@
+{
+  "name": "ploop",
+  "version": "1.0.0",
+  "main": "expo-router/entry",
+  "dependencies": {
+    "@expo/vector-icons": "^15.0.2",
+    "@react-native-community/datetimepicker": "9.2.1",
+    "babel-preset-expo": "~58.0.0",
+    "d3-geo": "^3.1.2",
+    "drizzle-orm": "^0.45.4",
+    "expo": "~58.0.26",
+    "expo-camera": "~58.0.14",
+    "expo-constants": "~58.0.16",
+    "expo-crypto": "~58.0.8",
+    "expo-dev-client": "~58.0.21",
+    "expo-document-picker": "~58.0.5",
+    "expo-file-system": "~58.0.14",
+    "expo-font": "~58.0.12",
+    "expo-haptics": "~58.0.8",
+    "expo-image-picker": "~58.0.10",
+    "expo-linking": "~58.0.17",
+    "expo-media-library": "~58.0.14",
+    "expo-router": "~58.0.32",
+    "expo-sharing": "~58.0.23",
+    "expo-splash-screen": "~58.0.14",
+    "expo-sqlite": "~58.0.18",
+    "expo-status-bar": "~58.0.5",
+    "expo-system-ui": "~58.0.7",
+    "luxon": "^3.7.2",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-native": "0.88.1",
+    "react-native-gesture-handler": "~3.3.0",
+    "react-native-reanimated": "4.7.1",
+    "react-native-safe-area-context": "~5.11.1",
+    "react-native-screens": "~4.30.1",
+    "react-native-svg": "15.16.0",
+    "react-native-view-shot": "6.1.1",
+    "react-native-worklets": "0.13.0",
+    "topojson-client": "^3.1.0",
+    "world-atlas": "^2.0.2",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@testing-library/react-native": "^14.1.0",
+    "@types/d3-geo": "^3.1.1",
+    "@types/geojson": "^7946.0.16",
+    "@types/jest": "^30.0.0",
+    "@types/luxon": "^3.7.6",
+    "@types/react": "~19.3.0",
+    "@types/topojson-client": "^3.1.5",
+    "@types/topojson-specification": "^1.0.5",
+    "babel-plugin-inline-import": "^3.0.0",
+    "drizzle-kit": "^0.31.11",
+    "eslint-config-expo": "~58.0.4",
+    "eslint-config-prettier": "^10.1.8",
+    "geo-tz": "^8.1.11",
+    "i18n-iso-countries": "^7.14.0",
+    "jest": "^30.5.2",
+    "jest-expo": "~58.0.15",
+    "prettier": "^3.10.1",
+    "sharp": "^0.35.5",
+    "tsx": "^4.23.15",
+    "typescript": "~6.0.3"
+  },
+  "scripts": {
+    "start": "expo start --dev-client",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "lint": "expo lint",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "db:generate": "drizzle-kit generate",
+    "data:airports": "tsx scripts/build-airports.ts",
+    "data:airlines": "tsx scripts/build-airlines.ts",
+    "data:atlas": "tsx scripts/copy-world-atlas.ts",
+    "format": "prettier --write .",
+    "data:logos": "tsx scripts/build-airline-logos.ts"
+  },
+  "private": true,
+  "jest": {
+    "preset": "jest-expo",
+    "testMatch": [
+      "<rootDir>/__tests__/**/*.test.ts?(x)"
+    ],
+    "collectCoverageFrom": [
+      "src/lib/**/*.ts"
+    ],
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/src/$1",
+      "^d3-geo$": "<rootDir>/node_modules/d3-geo/dist/d3-geo.js",
+      "^d3-array$": "<rootDir>/node_modules/d3-array/dist/d3-array.js"
+    },
+    "transformIgnorePatterns": [
+      "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@sentry/react-native|native-base|react-native-svg|d3-.*|internmap|topojson-client|drizzle-orm|standard-navigation)"
+    ]
+  },
+  "prettier": {
+    "singleQuote": true,
+    "printWidth": 100,
+    "trailingComma": "all"
+  },
+  "license": "Apache-2.0"
+}
