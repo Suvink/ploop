@@ -5,7 +5,11 @@
  *   docs/privacy-policy.md → docs/privacy.html
  *   docs/terms.md          → docs/terms.html
  *   docs/index.html is hand-written; only its shared header/footer come from here.
+ *
+ * It also stamps assets/site.css and assets/theme.js links in every page with a content hash
+ * (?v=…), so browsers and the CDN fetch the new file as soon as it changes.
  */
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -145,6 +149,27 @@ function buildDoc(src: string, out: string, description: string) {
   console.log(`docs/${out}`);
 }
 
+const VERSIONED = ['assets/site.css', 'assets/theme.js'];
+
+/** Point every page at the current version of each shared asset. */
+function stampAssets() {
+  const pages = fs.readdirSync(docs).filter((f) => f.endsWith('.html'));
+  for (const asset of VERSIONED) {
+    const hash = crypto
+      .createHash('sha256')
+      .update(fs.readFileSync(path.join(docs, asset)))
+      .digest('hex')
+      .slice(0, 8);
+    const ref = new RegExp(`${asset.replace(/[.]/g, '\\.')}(\\?v=[0-9a-f]+)?"`, 'g');
+    for (const page of pages) {
+      const file = path.join(docs, page);
+      const html = fs.readFileSync(file, 'utf8');
+      const next = html.replace(ref, `${asset}?v=${hash}"`);
+      if (next !== html) fs.writeFileSync(file, next);
+    }
+  }
+}
+
 if (require.main === module) {
   buildDoc(
     'privacy-policy.md',
@@ -152,4 +177,5 @@ if (require.main === module) {
     'How Ploop handles your data: it stays on your phone.',
   );
   buildDoc('terms.md', 'terms.html', 'Terms and conditions for using the Ploop app.');
+  stampAssets();
 }
