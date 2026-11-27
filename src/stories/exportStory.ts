@@ -50,13 +50,23 @@ function cleanup(uri: string) {
 
 export type SaveResult = 'saved' | 'denied';
 
+/**
+ * Saves into a "Ploop" album. Write-only: on Android 13+ this needs no photo permission at all
+ * (READ_MEDIA_IMAGES is blocked in app.json, per Google Play's photo permissions policy), and
+ * the album lookup only ever sees images Ploop saved itself.
+ */
 export async function saveToGallery(uri: string): Promise<SaveResult> {
   const perm = await MediaLibrary.requestPermissionsAsync(true, ['photo']);
   if (!perm.granted) return 'denied';
   try {
-    const album = await MediaLibrary.Album.get(ALBUM_NAME);
-    if (album) await MediaLibrary.Asset.create(uri, album);
-    else await MediaLibrary.Album.create(ALBUM_NAME, [uri], false);
+    try {
+      const album = await MediaLibrary.Album.get(ALBUM_NAME);
+      if (album) await MediaLibrary.Asset.create(uri, album);
+      else await MediaLibrary.Album.create(ALBUM_NAME, [uri], false);
+    } catch {
+      // Album unavailable (e.g. left over from an earlier install): save to Pictures instead.
+      await MediaLibrary.Asset.create(uri);
+    }
   } finally {
     cleanup(uri);
   }
