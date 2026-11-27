@@ -29,61 +29,75 @@ export function AdSlot({ style }: { style?: StyleProp<ViewStyle> }) {
   return <AdCard ad={ad} style={style} />;
 }
 
+/** A line beside the "Ad" badge, so it's clear why the ad is here (and that we know). */
+export const AD_QUIPS = [
+  'Pays for Ploop’s jet fuel',
+  'Keeps Ploop free and flying',
+  'Funds the developer’s coffee habit',
+  'Ploop’s in-flight magazine',
+  'Fuelling the next update',
+  'Your free passport, sponsored by…',
+  'Keeps the bugs grounded',
+  'Fewer ads than a budget airline',
+];
+
 function AdCard({ ad, style }: { ad: NativeAd; style?: StyleProp<ViewStyle> }) {
   const { c } = useTheme();
   const display = useDisplayFont();
-  const by = ad.advertiser ?? ad.store;
+  // One quip per card, kept for its lifetime.
+  const [quip] = useState(() => AD_QUIPS[Math.floor(Math.random() * AD_QUIPS.length)]);
   const { NativeAdView, NativeAsset, NativeAssetType } = sdk!;
   return (
-    <NativeAdView
-      nativeAd={ad}
-      style={[styles.card, { backgroundColor: c.surface, borderColor: c.border }, style]}
-    >
-      <View style={styles.top}>
-        <View style={[styles.badge, { borderColor: c.accentText }]}>
-          <Text style={[styles.badgeText, { color: c.accentText }]}>Ad</Text>
+    // The rounded card is a plain View around the ad: NativeAdView is a native Android view that
+    // ignores borderRadius, so styling it directly drew a square tile.
+    <View style={[styles.card, { backgroundColor: c.surface, borderColor: c.border }, style]}>
+      <NativeAdView nativeAd={ad} style={styles.inner}>
+        <View style={styles.top}>
+          <View style={[styles.badge, { borderColor: c.accentText }]}>
+            <Text style={[styles.badgeText, { color: c.accentText }]}>Ad</Text>
+          </View>
+          <Text style={[styles.quip, { color: c.textMuted }]} numberOfLines={1}>
+            {quip}
+          </Text>
         </View>
-        <Text style={[styles.overline, { color: c.textMuted }]} numberOfLines={1}>
-          Sponsored{by ? ` · ${by}` : ''}
-        </Text>
-      </View>
 
-      <View style={styles.row}>
-        {ad.icon?.url ? (
-          <NativeAsset assetType={NativeAssetType.ICON}>
-            <Image
-              source={{ uri: ad.icon.url }}
-              style={[styles.icon, { backgroundColor: c.iconBg }]}
-            />
-          </NativeAsset>
-        ) : null}
-        <View style={{ flex: 1, gap: 2 }}>
-          <NativeAsset assetType={NativeAssetType.HEADLINE}>
-            <Text
-              numberOfLines={2}
-              style={[styles.headline, { color: c.text, fontFamily: display.bold }]}
-            >
-              {ad.headline}
-            </Text>
-          </NativeAsset>
-          {ad.body ? (
-            <NativeAsset assetType={NativeAssetType.BODY}>
-              <Text numberOfLines={2} style={[styles.body, { color: c.textMuted }]}>
-                {ad.body}
-              </Text>
+        <View style={styles.row}>
+          {ad.icon?.url ? (
+            <NativeAsset assetType={NativeAssetType.ICON}>
+              <Image
+                source={{ uri: ad.icon.url }}
+                style={[styles.icon, { backgroundColor: c.iconBg }]}
+              />
             </NativeAsset>
           ) : null}
+          <View style={{ flex: 1, gap: 2 }}>
+            <NativeAsset assetType={NativeAssetType.HEADLINE}>
+              <Text
+                numberOfLines={2}
+                style={[styles.headline, { color: c.text, fontFamily: display.bold }]}
+              >
+                {ad.headline}
+              </Text>
+            </NativeAsset>
+            {ad.body ? (
+              <NativeAsset assetType={NativeAssetType.BODY}>
+                <Text numberOfLines={2} style={[styles.body, { color: c.textMuted }]}>
+                  {ad.body}
+                </Text>
+              </NativeAsset>
+            ) : null}
+          </View>
         </View>
-      </View>
 
-      {ad.callToAction ? (
-        <NativeAsset assetType={NativeAssetType.CALL_TO_ACTION}>
-          <Text style={[styles.cta, { backgroundColor: c.primary, color: c.onPrimary }]}>
-            {ad.callToAction}
-          </Text>
-        </NativeAsset>
-      ) : null}
-    </NativeAdView>
+        {ad.callToAction ? (
+          <NativeAsset assetType={NativeAssetType.CALL_TO_ACTION}>
+            <Text style={[styles.cta, { backgroundColor: c.primary, color: c.onPrimary }]}>
+              {ad.callToAction}
+            </Text>
+          </NativeAsset>
+        ) : null}
+      </NativeAdView>
+    </View>
   );
 }
 
@@ -91,22 +105,14 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: radius.lg,
     borderWidth: 1,
-    padding: space.lg,
-    gap: space.md,
     overflow: 'hidden',
   },
+  inner: { padding: space.lg, gap: space.md },
   // Leave room on the right for the AdChoices icon the SDK draws in the corner.
   top: { flexDirection: 'row', alignItems: 'center', gap: space.sm, paddingRight: space.xl },
   badge: { borderWidth: 1, borderRadius: radius.sm / 2, paddingHorizontal: 5 },
   badgeText: { fontFamily: fonts.semibold, fontSize: 10, lineHeight: 15 },
-  overline: {
-    flex: 1,
-    fontFamily: fonts.semibold,
-    fontSize: 11,
-    lineHeight: 16,
-    letterSpacing: 1.4,
-    textTransform: 'uppercase',
-  },
+  quip: { flex: 1, fontFamily: fonts.medium, fontSize: 12, lineHeight: 16, fontStyle: 'italic' },
   row: { flexDirection: 'row', alignItems: 'center', gap: space.md },
   icon: { width: 48, height: 48, borderRadius: radius.md },
   headline: { fontSize: 16, lineHeight: 21 },
