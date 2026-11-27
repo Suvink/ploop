@@ -13,8 +13,9 @@
   color-scheme: light;
 }
 
+/* Dark: follows the system unless the visitor picked a theme with the toggle (data-theme). */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
     --bg: #13162b;
     --surface: #1b1f38;
     --text: #ece6dc;
@@ -24,6 +25,17 @@
     --shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
     color-scheme: dark;
   }
+}
+
+:root[data-theme='dark'] {
+  --bg: #13162b;
+  --surface: #1b1f38;
+  --text: #ece6dc;
+  --muted: #9aa0c3;
+  --border: #262b4a;
+  --accent-text: #ff8a76;
+  --shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+  color-scheme: dark;
 }
 
 * {
@@ -111,6 +123,55 @@ a {
 
 .top nav a:hover {
   color: var(--text);
+}
+
+.top nav {
+  align-items: center;
+}
+
+.theme-toggle {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  color: var(--text);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 2px;
+}
+
+/* Show the moon in light mode (tap for dark) and the sun in dark mode. */
+.theme-toggle .sun {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .theme-toggle .sun {
+    display: block;
+  }
+
+  :root:not([data-theme='light']) .theme-toggle .moon {
+    display: none;
+  }
+}
+
+:root[data-theme='dark'] .theme-toggle .sun {
+  display: block;
+}
+
+:root[data-theme='dark'] .theme-toggle .moon {
+  display: none;
 }
 
 /* Hero */
