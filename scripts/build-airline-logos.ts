@@ -49,7 +49,7 @@ async function main() {
   fs.mkdirSync(cacheDir, { recursive: true });
   fs.rmSync(outDir, { recursive: true, force: true });
   fs.mkdirSync(outDir, { recursive: true });
-  const airlines: { iata: string; icao: string }[] = JSON.parse(
+  const airlines: { iata: string; icao: string; alt?: string[] }[] = JSON.parse(
     fs.readFileSync(path.join(root, 'assets', 'data', 'airlines.json'), 'utf8'),
   );
   const found: string[] = [];
@@ -57,7 +57,8 @@ async function main() {
   const worker = async () => {
     for (let a = queue.shift(); a; a = queue.shift()) {
       if (!a.icao || !/^[A-Z0-9]{2}$/.test(a.iata)) continue;
-      const buf = await fetchCached(a.icao);
+      let buf: Buffer | null = null;
+      for (const code of [a.icao, ...(a.alt ?? [])]) if (!buf) buf = await fetchCached(code);
       if (!buf) continue;
       try {
         await sharp(buf)

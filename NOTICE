@@ -5,7 +5,7 @@ This product is licensed under the Apache License, Version 2.0 (see LICENSE).
 
 It bundles third-party data and fonts under their own licences:
 - Airport data: OurAirports (public domain)
-- Airline data: OpenFlights (Open Database License)
+- Airline data: Wikidata (CC0)
 - Map outlines: Natural Earth via world-atlas (public domain)
 - Fonts: Plus Jakarta Sans, Inter and Fredoka (SIL Open Font License 1.1, see assets/fonts/)
 - Icons: Feather (MIT)

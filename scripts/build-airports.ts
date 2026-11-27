@@ -66,6 +66,39 @@ function toObjects(rows: string[][]): Record<string, string>[] {
     .map((r) => Object.fromEntries(header.map((h, i) => [h, r[i]])));
 }
 
+/**
+ * OurAirports' municipality is often "City (district)" or the town the runway sits in, e.g.
+ * "Paris (Roissy-en-France, Val-d'Oise)" or "Ferno (VA)". Show the city a traveller would say.
+ */
+const CITY_OVERRIDES: Record<string, string> = {
+  CFU: 'Corfu',
+  CGN: 'Cologne',
+  FLR: 'Florence',
+  GOA: 'Genoa',
+  VCE: 'Venice',
+  LIN: 'Milan',
+  MXP: 'Milan',
+  BGY: 'Bergamo',
+  TRN: 'Turin',
+  VRN: 'Verona',
+  VBS: 'Brescia',
+  CUF: 'Cuneo',
+  AOI: 'Ancona',
+  CRV: 'Crotone',
+  EBA: 'Elba',
+  USM: 'Ko Samui',
+  PUF: 'Pau',
+  MUE: 'Waimea',
+};
+
+export function cleanCity(iata: string, municipality: string): string {
+  if (CITY_OVERRIDES[iata]) return CITY_OVERRIDES[iata];
+  return municipality
+    .replace(/\s*\(.*\)\s*$/, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 const round4 = (n: number) => Math.round(n * 1e4) / 1e4;
 const SIZE: Record<string, 'L' | 'M' | 'S'> = {
   large_airport: 'L',
@@ -99,7 +132,7 @@ async function main() {
       iata,
       icao,
       a.name.trim(),
-      (a.municipality || '').trim(),
+      cleanCity(iata, a.municipality || ''),
       a.iso_country,
       round4(lat),
       round4(lon),

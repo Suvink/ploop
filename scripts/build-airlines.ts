@@ -1,18 +1,33 @@
 /**
- * Builds assets/data/airlines.json from OpenFlights airlines.dat.
- * Licence: OpenFlights data is under the Open Database License (ODbL) — approved by the
- * project owner. Attribution is shown in Settings → About.
- * Run: npx tsx scripts/build-airlines.ts
+ * Builds assets/data/airlines.json from Wikidata (CC0), which tracks current IATA code holders
+ * and when airlines stopped flying. Codes get reassigned (D8: Djibouti Airlines → Norwegian Air
+ * Sweden), so for each code we keep the airline that is still operating, or failing that
+ * the one that closed most recently.
+ * Run: npm run data:airlines   (dev only, needs network; the response is cached in scripts/.cache)
  *
- * Output: [{ iata, icao, name, color }]
+ * Output: [{ iata, icao, name, color, alt? }]   alt: other ICAO codes the airline uses, for logos
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { parseCsv } from './build-airports';
 
-const URL = 'https://raw.githubusercontent.com/jpatokal/openflights/master/data/airlines.dat';
-const CACHE = path.join(__dirname, '.cache', 'airlines.dat');
+const ENDPOINT = 'https://query.wikidata.org/sparql';
+const CACHE = path.join(__dirname, '.cache', 'airlines-wikidata.json');
 const OUT = path.join(__dirname, '..', 'assets', 'data', 'airlines.json');
+
+// Every item with an IATA airline designator (P229), plus ICAO (P230), dissolved (P576),
+// inception (P571), and its sitelink count. Many labels now live under "mul" rather than "en".
+// as a tie-breaker for "the airline people know".
+const QUERY = `
+SELECT ?item ?iata ?icao ?label ?dissolved ?start ?links WHERE {
+  ?item wdt:P229 ?iata .
+  OPTIONAL { ?item wdt:P230 ?icao . }
+  OPTIONAL { ?item wdt:P576 ?dissolved . }
+  OPTIONAL { ?item wdt:P571 ?start . }
+  OPTIONAL { ?item wikibase:sitelinks ?links . }
+  OPTIONAL { ?item rdfs:label ?en FILTER(LANG(?en) = "en") }
+  OPTIONAL { ?item rdfs:label ?mul FILTER(LANG(?mul) = "mul") }
+  BIND(COALESCE(?en, ?mul) AS ?label)
+}`;
 
 /** Brand-ish chip colours for common carriers. Unknown carriers use a neutral default in the UI. */
 const COLORS: Record<string, string> = {
@@ -150,31 +165,97 @@ const COLORS: Record<string, string> = {
 };
 const DEFAULT_COLOR = '#5F6487';
 
-async function load(): Promise<string> {
-  if (fs.existsSync(CACHE)) return fs.readFileSync(CACHE, 'utf8');
+type Binding = Record<string, { value: string } | undefined>;
+
+async function load(): Promise<Binding[]> {
+  if (fs.existsSync(CACHE)) return JSON.parse(fs.readFileSync(CACHE, 'utf8'));
   fs.mkdirSync(path.dirname(CACHE), { recursive: true });
-  console.log('Downloading airlines.dat…');
-  const res = await fetch(URL);
-  if (!res.ok) throw new Error(`Download failed: ${res.status}`);
-  const text = await res.text();
-  fs.writeFileSync(CACHE, text);
-  return text;
+  console.log('Querying Wikidata…');
+  const res = await fetch(`${ENDPOINT}?query=${encodeURIComponent(QUERY)}`, {
+    headers: { Accept: 'application/sparql-results+json', 'User-Agent': 'airline-codes-build/1.0' },
+  });
+  if (!res.ok) throw new Error(`Wikidata query failed: ${res.status}`);
+  const rows: Binding[] = (await res.json()).results.bindings;
+  fs.writeFileSync(CACHE, JSON.stringify(rows));
+  return rows;
+}
+
+interface Candidate {
+  id: string;
+  iata: string;
+  icao: string;
+  icaos: string[];
+  name: string;
+  dissolved: string;
+  start: string;
+  links: number;
+}
+
+/** Wikidata labels sometimes carry a disambiguator, e.g. "Jet2 (airline)". */
+const cleanName = (s: string) => s.replace(/\s*\((airline|company|airline company)\)$/i, '').trim();
+
+/**
+ * Airlines that stopped flying after this still get a name, so older boarding passes
+ * (a 2019 Jet Airways flight, say) aren't shown as a bare code.
+ */
+const KEEP_DISSOLVED_SINCE = '2010';
+
+/**
+ * Higher is better: still operating, then most recently closed, then has an ICAO code,
+ * better known, more recently founded.
+ */
+function better(a: Candidate, b: Candidate): boolean {
+  if (!a.dissolved !== !b.dissolved) return !a.dissolved;
+  if (a.dissolved !== b.dissolved) return a.dissolved > b.dissolved;
+  if (!!a.icao !== !!b.icao) return !!a.icao;
+  if (a.links !== b.links) return a.links > b.links;
+  return a.start > b.start;
 }
 
 async function main() {
-  const rows = parseCsv(await load());
-  const out = new Map<string, { iata: string; icao: string; name: string; color: string }>();
-  for (const r of rows) {
-    if (r.length < 8) continue;
-    const [, name, , iataRaw, icaoRaw, , , active] = r;
-    const iata = (iataRaw || '').trim().toUpperCase();
-    const icao = (icaoRaw || '').trim().toUpperCase();
-    if (active !== 'Y' || !/^[A-Z0-9]{2}$/.test(iata) || !/^[A-Z]{3}$/.test(icao)) continue;
-    // Keep the first entry for duplicate IATA codes, but prefer ones we have a colour for.
-    if (out.has(iata)) continue;
-    out.set(iata, { iata, icao, name: name.trim(), color: COLORS[iata] ?? DEFAULT_COLOR });
+  const byItem = new Map<string, Candidate>();
+  for (const b of await load()) {
+    const iata = b.iata?.value.trim().toUpperCase() ?? '';
+    const name = b.label?.value ?? '';
+    if (!/^[A-Z0-9]{2}$/.test(iata) || !name || /^Q\d+$/.test(name)) continue;
+    const icao = (b.icao?.value ?? '').trim().toUpperCase();
+    const id = `${b.item!.value}|${iata}`;
+    const prev = byItem.get(id);
+    // An item can list several ICAO codes (Norwegian Air Sweden: NSW, NSZ); keep them all.
+    if (prev) {
+      if (/^[A-Z]{3}$/.test(icao) && !prev.icaos.includes(icao)) prev.icaos.push(icao);
+      prev.icao = prev.icaos[0] ?? '';
+      continue;
+    }
+    const icaos = /^[A-Z]{3}$/.test(icao) ? [icao] : [];
+    byItem.set(id, {
+      id,
+      iata,
+      icao: icaos[0] ?? '',
+      icaos,
+      name: cleanName(name),
+      dissolved: b.dissolved?.value ?? '',
+      start: b.start?.value ?? '',
+      links: Number(b.links?.value ?? 0),
+    });
   }
-  const list = [...out.values()].sort((a, b) => a.iata.localeCompare(b.iata));
+
+  const best = new Map<string, Candidate>();
+  for (const c of byItem.values()) {
+    const prev = best.get(c.iata);
+    if (!prev || better(c, prev)) best.set(c.iata, c);
+  }
+
+  const list = [...best.values()]
+    .filter((c) => !c.dissolved || c.dissolved >= KEEP_DISSOLVED_SINCE)
+    .map((c) => ({
+      iata: c.iata,
+      icao: c.icao,
+      name: c.name,
+      color: COLORS[c.iata] ?? DEFAULT_COLOR,
+      ...(c.icaos.length > 1 ? { alt: c.icaos.slice(1) } : {}),
+    }))
+    .sort((a, b) => a.iata.localeCompare(b.iata));
   fs.writeFileSync(OUT, JSON.stringify(list));
   console.log(
     `airlines.json: ${list.length} airlines, ${(fs.statSync(OUT).size / 1024).toFixed(1)} KB`,
