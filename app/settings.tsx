@@ -23,6 +23,9 @@ import { Icon } from '@/components/Icon';
 import { AirportPicker } from '@/components/AirportPicker';
 import { useToast } from '@/components/Toast';
 import { showDialog } from '@/components/Dialog';
+import { AdSlot } from '@/ads/AdSlot';
+import { showAdPrivacyOptions } from '@/ads/adCache';
+import { useAdPrivacyRequired } from '@/ads/useAdPrivacy';
 
 function Row({ label, value, onPress }: { label: string; value?: string; onPress: () => void }) {
   const { c } = useTheme();
@@ -67,6 +70,7 @@ export default function SettingsScreen() {
   const [pickHome, setPickHome] = useState(false);
   const [name, setName] = useState(settings.passportName);
   const [busy, setBusy] = useState<string | null>(null);
+  const adPrivacy = useAdPrivacyRequired();
   const home = settings.homeAirport ? getAirport(settings.homeAirport) : undefined;
 
   const doExport = async () => {
@@ -198,8 +202,8 @@ export default function SettingsScreen() {
 
       <Section title="Your data">
         <Body variant="caption" muted style={{ marginBottom: space.md }}>
-          Ploop has no account and never goes online. Your flights live only on this phone — export
-          a backup now and then.
+          Ploop has no account and your flights never leave this phone. Export a backup now and
+          then.
         </Body>
         <View style={{ gap: space.md }}>
           <Button
@@ -214,7 +218,8 @@ export default function SettingsScreen() {
             onPress={chooseImport}
             loading={busy === 'import'}
           />
-          {__DEV__ && (
+          {/* Demo data: dev builds, or builds made with EXPO_PUBLIC_DEMO=1 (store screenshots). */}
+          {(__DEV__ || process.env.EXPO_PUBLIC_DEMO === '1') && (
             <Button
               label="Load demo data (dev)"
               variant="ghost"
@@ -236,10 +241,9 @@ export default function SettingsScreen() {
         </Body>
         <Body muted>Version {appVersion()}</Body>
         <Body variant="caption" muted style={{ marginTop: space.sm }}>
-          Airport data: OurAirports (public domain). Airline data: OpenFlights, under the Open
-          Database License (ODbL). Map outlines: Natural Earth (public domain) via world-atlas. Time
-          zones from geo-tz. Fonts: Plus Jakarta Sans, Inter and Fredoka, under the SIL Open Font
-          License 1.1. Icons: Feather (MIT).
+          Airport data: OurAirports (public domain). Airline data: Wikidata (CC0). Map outlines:
+          Natural Earth (public domain) via world-atlas. Time zones from geo-tz. Fonts: Plus Jakarta
+          Sans, Inter and Fredoka, under the SIL Open Font License 1.1. Icons: Feather (MIT).
         </Body>
         <View style={{ marginTop: space.lg }}>
           <Divider />
@@ -251,8 +255,20 @@ export default function SettingsScreen() {
             label="Terms and Conditions"
             onPress={() => router.push({ pathname: '/legal/[doc]', params: { doc: 'terms' } })}
           />
+          {adPrivacy && (
+            <Row
+              label="Ad Privacy Choices"
+              onPress={() =>
+                showAdPrivacyOptions().catch(() =>
+                  toast('Couldn’t open ad privacy choices. Are you online?'),
+                )
+              }
+            />
+          )}
         </View>
       </Section>
+
+      <AdSlot style={{ marginTop: space.section }} />
 
       <AirportPicker
         visible={pickHome}

@@ -23,7 +23,8 @@
         "android.permission.RECORD_AUDIO",
         "android.permission.READ_MEDIA_VIDEO",
         "android.permission.READ_MEDIA_AUDIO",
-        "android.permission.ACCESS_MEDIA_LOCATION"
+        "android.permission.ACCESS_MEDIA_LOCATION",
+        "android.permission.SYSTEM_ALERT_WINDOW"
       ]
     },
     "plugins": [
@@ -76,9 +77,16 @@
       ],
       "@react-native-community/datetimepicker",
       "expo-sharing",
-      "./plugins/withNoInternetInRelease"
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-3940256099942544~3347511713",
+          "iosAppId": "ca-app-pub-3940256099942544~1458002511",
+          "delayAppMeasurementInit": true
+        }
+      ]
     ],
-    "description": "Every flight as a little story. An offline flight log and passport for Android.",
+    "description": "Every flight as a little story. A flight log and passport for Android.",
     "extra": {
       "router": {
         "asyncRoutes": {

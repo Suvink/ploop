@@ -15,6 +15,8 @@ import { EmptyState } from '@/components/EmptyState';
 import { Fab } from '@/components/Fab';
 import { showFlightActions } from '@/components/flightActions';
 import { formatDistance } from '@/lib/format';
+import { AdSlot } from '@/ads/AdSlot';
+import { adPositions } from '@/ads/placement';
 import type { Flight } from '@/lib/types';
 
 interface FlightSection {
@@ -71,6 +73,13 @@ export default function FlightsScreen() {
     return out;
   }, [flights, today, settings.distanceUnit]);
 
+  // Ads sit between flights in long lists; a short list gets one at the end.
+  const ads = useMemo(() => {
+    const ids = sections.flatMap((s) => s.data.map((f) => f.id));
+    const after = adPositions(ids.length);
+    return { after: new Set(after.map((i) => ids[i])), footer: ids.length > 0 && !after.length };
+  }, [sections]);
+
   return (
     <View style={{ flex: 1, backgroundColor: c.background }}>
       <View style={[styles.header, { paddingTop: insets.top + space.md }]}>
@@ -111,12 +120,16 @@ export default function FlightsScreen() {
           </View>
         )}
         renderItem={({ item }) => (
-          <FlightRow
-            flight={item}
-            onPress={() => router.push(`/flight/${item.id}`)}
-            onLongPress={() => showFlightActions(item)}
-          />
+          <>
+            <FlightRow
+              flight={item}
+              onPress={() => router.push(`/flight/${item.id}`)}
+              onLongPress={() => showFlightActions(item)}
+            />
+            {ads.after.has(item.id) && <AdSlot style={{ marginVertical: space.lg }} />}
+          </>
         )}
+        ListFooterComponent={ads.footer ? <AdSlot style={{ marginTop: space.xl }} /> : undefined}
         ListEmptyComponent={
           loaded ? (
             <EmptyState

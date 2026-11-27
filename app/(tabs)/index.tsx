@@ -39,6 +39,7 @@ import { useToast } from '@/components/Toast';
 import { AirlineLogo } from '@/components/AirlineLogo';
 import { Divider } from '@/components/Divider';
 import { EmptyState } from '@/components/EmptyState';
+import { AdSlot } from '@/ads/AdSlot';
 
 const logo = require('../../assets/images/logo.png');
 
@@ -366,6 +367,7 @@ export default function HomeScreen() {
           </Section>
         </>
       )}
+      <AdSlot style={{ marginTop: space.section }} />
       <Body variant="caption" muted style={styles.version}>
         Ploop v{appVersion()}
       </Body>

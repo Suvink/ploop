@@ -11,6 +11,7 @@ import { EmptyState } from '@/components/EmptyState';
 import { TEMPLATES } from '@/stories/StoryRenderer';
 import { TemplatePreview } from '@/stories/TemplatePreview';
 import { useToday } from '@/hooks/useStats';
+import { AdSlot } from '@/ads/AdSlot';
 
 export default function ShareScreen() {
   const { c } = useTheme();
@@ -68,6 +69,7 @@ export default function ShareScreen() {
           ))}
         </View>
       )}
+      <AdSlot style={{ marginTop: space.section }} />
     </Screen>
   );
 }

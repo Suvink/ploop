@@ -21,6 +21,12 @@
       "android": {
         "buildType": "app-bundle"
       }
+    },
+    "no-ads": {
+      "extends": "preview",
+      "env": {
+        "EXPO_PUBLIC_ADS": "off"
+      }
     }
   },
   "submit": {

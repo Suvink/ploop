@@ -9,8 +9,23 @@ function versionCode(v) {
   return major * 10000 + minor * 100 + patch;
 }
 
+/**
+ * AdMob app ID: app.json holds Google's test ID; release builds set ADMOB_ANDROID_APP_ID
+ * (an EAS environment variable) to the real one.
+ */
+function withAdMobAppId(plugins) {
+  const appId = process.env.ADMOB_ANDROID_APP_ID;
+  if (!appId) return plugins;
+  return plugins.map((p) =>
+    Array.isArray(p) && p[0] === 'react-native-google-mobile-ads'
+      ? [p[0], { ...p[1], androidAppId: appId }]
+      : p,
+  );
+}
+
 module.exports = ({ config }) => ({
   ...config,
   version: pkg.version,
   android: { ...config.android, versionCode: versionCode(pkg.version) },
+  plugins: withAdMobAppId(config.plugins ?? []),
 });

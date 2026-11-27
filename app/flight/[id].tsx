@@ -22,6 +22,7 @@ import { WorldMap } from '@/components/WorldMap';
 import { flightDistanceKm } from '@/components/FlightRow';
 import { confirmDelete } from '@/components/flightActions';
 import { useToast } from '@/components/Toast';
+import { AdSlot } from '@/ads/AdSlot';
 
 function Fact({ label, value, est }: { label: string; value: string | null; est?: boolean }) {
   if (!value) return null;
@@ -203,6 +204,7 @@ export default function FlightDetail() {
           onPress={() => router.push({ pathname: '/add/manual', params: { returnOf: flight.id } })}
         />
       </View>
+      <AdSlot style={{ marginTop: space.section }} />
     </Screen>
   );
 }

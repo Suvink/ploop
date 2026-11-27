@@ -1,6 +1,6 @@
 # Terms and Conditions
 
-**Ploop** · Effective 26 November 2026
+**Ploop** · Effective 27 November 2026
 
 These terms apply to your use of the Ploop app. By installing or using Ploop you agree to them. If you don't agree, please don't use the app.
 
@@ -12,7 +12,7 @@ Please don't use Ploop to break any law or to harass, mislead or harm anyone.
 
 ## Your data
 
-Your flights and settings are stored only on your device; see the [Privacy Policy](privacy-policy.md). Because nothing is stored online, **you are responsible for your own backups**. Use Settings → Export Backup from time to time. If your device is lost, reset or the app is uninstalled, data that wasn't backed up can't be recovered.
+Your flights and settings are stored only on your device; see the [Privacy Policy](privacy-policy.md). Because your flights aren't stored online, **you are responsible for your own backups**. Use Settings → Export Backup from time to time. If your device is lost, reset or the app is uninstalled, data that wasn't backed up can't be recovered.
 
 ## Information in the app
 
@@ -24,13 +24,19 @@ Reading a boarding pass depends on the barcode and how the airline encoded it, s
 
 Airport, airline and map data come from third-party sources under their own licences (listed in the app's Settings → About). Airline names and logos are trademarks of their respective owners. They are shown only to identify airlines and don't imply any endorsement of, or affiliation with, Ploop.
 
+## Advertising
+
+Ploop is free to use and is supported by ads, which appear as cards marked "Ad" inside the app. Ads are provided by Google AdMob and third-party advertisers, not by Ploop. We don't endorse and aren't responsible for the products, services, websites or content in ads. If you tap an ad, you leave Ploop and the advertiser's own terms and privacy policy apply. How ad data is handled, and the choices you have, are described in the [Privacy Policy](privacy-policy.md).
+
+Please don't tap ads deliberately to generate revenue, or use automated tools to view or tap them.
+
 ## Open source
 
 Ploop's source code is available under the Apache License 2.0. These terms cover your use of the app; the Apache License covers use of the source code.
 
 ## No warranty
 
-Ploop is provided free of charge, **"as is" and "as available"**, without warranties of any kind, express or implied, including fitness for a particular purpose, accuracy and non-infringement. We don't promise that the app will be error-free, work on every device or be available at all times.
+Ploop is provided free of charge (supported by ads), **"as is" and "as available"**, without warranties of any kind, express or implied, including fitness for a particular purpose, accuracy and non-infringement. We don't promise that the app will be error-free, work on every device or be available at all times.
 
 ## Limitation of liability
 

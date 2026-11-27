@@ -20,6 +20,7 @@ import { palette } from '@/theme/colors';
 import { Body } from '@/components/Text';
 import { AnimatedSplash } from '@/components/AnimatedSplash';
 import { DialogHost } from '@/components/Dialog';
+import { startAds } from '@/ads/adCache';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -41,7 +42,10 @@ function AppStack({ onReady }: { onReady: () => void }) {
     SystemUI.setBackgroundColorAsync(c.background).catch(() => {});
   }, [c.background]);
   useEffect(() => {
-    if (loaded) onReady();
+    if (!loaded) return;
+    onReady();
+    // After the splash, so Google's consent form (where required) shows over the app.
+    startAds();
   }, [loaded, onReady]);
 
   // Remember the first launch for "Member since" on the passport.

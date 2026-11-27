@@ -23,6 +23,7 @@ import { showDialog } from '@/components/Dialog';
 import { flagEmoji } from '@/components/DataPage';
 import { Divider } from '@/components/Divider';
 import type { CountryVisit } from '@/lib/stats';
+import { AdSlot } from '@/ads/AdSlot';
 
 function CountryList({ countries }: { countries: CountryVisit[] }) {
   return (
@@ -218,6 +219,7 @@ export default function PassportScreen() {
           </Section>
         </>
       )}
+      <AdSlot style={{ marginTop: space.section }} />
     </Screen>
   );
 }
