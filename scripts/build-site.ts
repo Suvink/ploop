@@ -123,6 +123,7 @@ export const FOOT = `    <footer>
           <a href="terms.html">Terms and Conditions</a>
           <a href="mailto:ploop@suvin.me">ploop@suvin.me</a>
           <a href="https://github.com/Suvink/ploop">GitHub</a>
+          <a href="https://buymeacoffee.com/suvink">Buy me a coffee</a>
         </nav>
       </div>
     </footer>
